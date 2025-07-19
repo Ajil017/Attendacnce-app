@@ -701,7 +701,41 @@
     </div>
 
     <script>
-        let students = JSON.parse(localStorage.getItem('students')) || [];
+           let students = [
+    { id: 1, name: "ABHINAV MANAKKAL", roll: "ECE23CS001", present: true },
+    { id: 2, name: "ABIJITH. B", roll: "ECE23CS002", present: true },
+    { id: 3, name: "ABIN ROY", roll: "ECE23CS003", present: true },
+    { id: 4, name: "ADHITHYAN P.B", roll: "ECE23CS004", present: true },
+    { id: 5, name: "AJIL P .R", roll: "ECE23CS005", present: true },
+    { id: 6, name: "AKASH P .R", roll: "ECE23CS006", present: true },
+    { id: 7, name: "ALBIN TOMY", roll: "ECE23CS007", present: true },
+    { id: 8, name: "ALBIN WILSON", roll: "ECE23CS008", present: true },
+    { id: 9, name: "ALEENA JAISON", roll: "ECE23CS009", present: true },
+    { id: 10, name: "AMAL BABU", roll: "ECE23CS010", present: true },
+    { id: 11, name: "AMBIKA RADHAKRISHNAN", roll: "ECE23CS011", present: true },
+    { id: 12, name: "ANJALI. K", roll: "ECE23CS014", present: true },
+    { id: 13, name: "ANNA MARIA JOHNSON", roll: "ECE23CS015", present: true },
+    { id: 14, name: "ANUPAMA.P.A", roll: "ECE23CS016", present: true },
+    { id: 15, name: "ASWIN JAYARAJ N", roll: "ECE23CS017", present: true },
+    { id: 16, name: "DEVIKA M.S", roll: "ECE23CS018", present: true },
+    { id: 17, name: "DEVIKRISHNA K .S", roll: "ECE23CS019", present: true },
+    { id: 18, name: "HENIL DAS C.Y", roll: "ECE23CS020", present: true },
+    { id: 19, name: "MELNA RAPPAI", roll: "ECE23CS021", present: true },
+    { id: 20, name: "MUHAMMED ASHKAR P .A", roll: "ECE23CS022", present: true },
+    { id: 21, name: "MUHSINA V. A", roll: "ECE23CS023", present: true },
+    { id: 22, name: "NOBLE BIJU", roll: "ECE23CS024", present: true },
+    { id: 23, name: "SAMASYA.S", roll: "ECE23CS025", present: true },
+    { id: 24, name: "SANDHRA REJI", roll: "ECE23CS026", present: true },
+    { id: 25, name: "SARANGH PR", roll: "ECE23CS027", present: true },
+    { id: 26, name: "TINO PAUL", roll: "ECE23CS028", present: true },
+    { id: 27, name: "TINO TYSON", roll: "ECE23CS029", present: true },
+    { id: 28, name: "ABHI PAUL", roll: "LECE23CS030", present: true },
+    { id: 29, name: "ALAN JOY", roll: "LECE23CS031", present: true },
+    { id: 30, name: "ASNA T. S", roll: "LECE23CS032", present: true },
+    { id: 31, name: "JISNA JOY", roll: "ECE23CD001", present: true },
+    { id: 32, name: "SOORYAKRISHNA M", roll: "ECE23CD002", present: true },
+    { id: 33, name: "GRACE ROSE K J", roll: "LECE23CD003", present: true }
+];
         let tutorSettings = JSON.parse(localStorage.getItem('tutorSettings')) || {};
         let reminderInterval = null;
 
