@@ -850,8 +850,10 @@
             let message = `📚 *Attendance Report*\n`;
             message += `🏫 *Class:* ${currentClass}\n`;
             message += `📅 *Date:* ${new Date(date).toLocaleDateString()}\n\n`;
+            message += `👥 *No. of Present Students:* ${presentCount}\n\n`;
             message += `❌ *Absentees (${absentees.length}):*\n`;
-            
+
+            message += `\nSent via Smart Attendance Manager`;
             absentees.forEach((student, index) => {
                 message += `${index + 1}. ${student.name} (Roll: ${student.roll})\n`;
             });
