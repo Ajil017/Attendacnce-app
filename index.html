@@ -183,6 +183,7 @@
             border-radius: 12px;
             border: 2px solid #e9ecef;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .attendance-card:hover {
@@ -190,8 +191,74 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
+        /* Updated status indicator styling */
+        .attendance-card::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .attendance-card.status-present::before {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            box-shadow: 0 0 10px rgba(81, 207, 102, 0.4);
+        }
+
+        .attendance-card.status-absent::before {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Status badge alternative */
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .status-badge.present {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            border-color: #51cf66;
+            box-shadow: 0 2px 8px rgba(81, 207, 102, 0.3);
+        }
+
+        .status-badge.absent {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border-color: #ff6b6b;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Enhanced left border indicator */
+        .attendance-card.status-present {
+            border-left: 5px solid #51cf66;
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.03), rgba(64, 192, 87, 0.01));
+        }
+
+        .attendance-card.status-absent {
+            border-left: 5px solid #ff6b6b;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.03), rgba(238, 90, 82, 0.01));
+        }
+
         .attendance-info {
             margin-bottom: 15px;
+            padding-right: 40px; /* Space for status indicator */
         }
 
         .attendance-buttons {
@@ -203,6 +270,8 @@
             flex: 1;
             padding: 10px;
             font-size: 14px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-present {
@@ -213,16 +282,10 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
         }
 
-        .status-present {
-            border-color: #51cf66;
-            background: linear-gradient(135deg, #51cf66, #40c057);
-            color: white;
-        }
-
-        .status-absent {
-            border-color: #ff6b6b;
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-            color: white;
+        /* Active button state */
+        .attendance-buttons button.active {
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+            transform: scale(0.98);
         }
 
         .stats {
@@ -307,6 +370,10 @@
             
             .attendance-buttons {
                 flex-direction: column;
+            }
+
+            .attendance-info {
+                padding-right: 30px;
             }
         }
     </style>
@@ -394,13 +461,17 @@
         }
 
         // Memory storage functions (since localStorage is not available)
-        function saveToMemory() {
-            // Data is already in memory in classesData object
-        }
+        // Save data to localStorage
+function saveToMemory() {
+    localStorage.setItem('attendanceData', JSON.stringify(classesData));
+}
 
-        function loadFromMemory() {
-            // Data persists in memory during the session
-            if (Object.keys(classesData).length === 0) {
+// Load data from localStorage
+function loadFromMemory() {
+    const saved = localStorage.getItem('attendanceData');
+    if (saved) {
+        classesData = JSON.parse(saved);
+    } else {
                 // Initialize with sample data if empty
                 classesData = {
                     "S5 CSE & DS": {
@@ -442,9 +513,11 @@
                         attendance: {},
                         tutorPhone: ''
                     }
-                };
-            }
-        }
+        };
+        saveToMemory();
+    }
+}
+
 
         // Class management functions
         function createClass() {
@@ -644,13 +717,14 @@
                 cardDiv.className = `attendance-card ${status === 'present' ? 'status-present' : status === 'absent' ? 'status-absent' : ''}`;
                 
                 cardDiv.innerHTML = `
+                    <div class="status-badge ${status}">${status === 'present' ? 'Present' : status === 'absent' ? 'Absent' : 'Unmarked'}</div>
                     <div class="attendance-info">
                         <div class="student-name">${student.name}</div>
                         <div class="student-roll">Roll: ${student.roll}</div>
                     </div>
                     <div class="attendance-buttons">
-                        <button class="btn-present" onclick="markAttendance('${student.roll}', 'present')">Present</button>
-                        <button class="btn-absent" onclick="markAttendance('${student.roll}', 'absent')">Absent</button>
+                        <button class="btn-present ${status === 'present' ? 'active' : ''}" onclick="markAttendance('${student.roll}', 'present')">Present</button>
+                        <button class="btn-absent ${status === 'absent' ? 'active' : ''}" onclick="markAttendance('${student.roll}', 'absent')">Absent</button>
                     </div>
                 `;
                 attendanceGrid.appendChild(cardDiv);
@@ -833,13 +907,17 @@
                 return;
             }
 
-            // Get absentees
+            // Get absentees and present count
             const students = classesData[currentClass].students;
             const attendanceData = classesData[currentClass].attendance[date] || {};
             
             const absentees = students.filter(student => 
                 attendanceData[student.roll] === 'absent'
             );
+
+            const presentCount = students.filter(student => 
+                attendanceData[student.roll] === 'present'
+            ).length;
 
             if (absentees.length === 0) {
                 alert('No absentees found for the selected date');
@@ -850,15 +928,15 @@
             let message = `📚 *Attendance Report*\n`;
             message += `🏫 *Class:* ${currentClass}\n`;
             message += `📅 *Date:* ${new Date(date).toLocaleDateString()}\n\n`;
-            message += `👥 *No. of Present Students:* ${presentCount}\n\n`;
-            message += `❌ *Absentees (${absentees.length}):*\n`;
-
-            message += `\nSent via Smart Attendance Manager`;
+            message += `👥 *Present Students:* ${presentCount}\n`;
+            message += `❌ *Absentees (${absentees.length}):*\n\n`;
+            
             absentees.forEach((student, index) => {
-                message += `${index + 1}. ${student.name} (Roll: ${student.roll})\n`;
+                message += `${index + 1}. ${student.name} (${student.roll})\n`;
             });
 
-            
+            message += `\n_Sent via Smart Attendance Manager_`;
+
             // Clean phone number (remove + for WhatsApp URL)
             const cleanPhone = tutorPhone.replace('+', '');
             
